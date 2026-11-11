@@ -171,7 +171,7 @@ describe('targets and values', () => {
       ['screen_time', 'lte', 0], ['screen_time', 'lte', 1440], ['screen_time', 'lte', 1441], ['screen_time', 'lte', 95.5],
       ['prayer', 'bool', 0], ['prayer', 'bool', 1], ['prayer', 'bool', 2],
       ['pushups', 'gte', 100000], ['pushups', 'gte', 100001], ['pushups', 'gte', 12.5],
-      ['custom', 'gte', 2.5], ['custom', 'gte', 2.555], ['custom', 'bool', 1],
+      ['custom', 'gte', 2.5], ['custom', 'gte', 2.2], ['custom', 'gte', 0.07], ['custom', 'gte', 2.555], ['custom', 'bool', 1],
       ['reading', 'gte', 1440], ['reading', 'gte', 1441],
     ];
     for (const [habit, comparator, value] of cases) {

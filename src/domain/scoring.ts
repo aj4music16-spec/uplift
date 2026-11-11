@@ -49,7 +49,8 @@ export function isValidDailyValue(habitType: HabitType, comparator: Comparator, 
   if (!Number.isFinite(value) || value < 0) return false;
   if (comparator === 'bool') return value === 0 || value === 1;
   if (value > HABITS[habitType].maxDailyValue) return false;
-  if (habitType === 'custom') return Math.round(value * 100) === value * 100;
+  // Two decimal places at most. Compared with a tolerance: 2.2 * 100 is 220.00000000000003 in floating point.
+  if (habitType === 'custom') return Math.abs(Math.round(value * 100) - value * 100) < 1e-6;
   return Number.isInteger(value);
 }
 

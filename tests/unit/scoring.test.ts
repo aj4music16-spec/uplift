@@ -55,6 +55,9 @@ describe('targets', () => {
     expect(isValidDailyValue('prayer', 'bool', 1)).toBe(true);
     expect(isValidDailyValue('prayer', 'bool', 2)).toBe(false);
     expect(isValidDailyValue('custom', 'gte', 2.5)).toBe(true);
+    // 2.2 * 100 is not exactly 220 in floating point; it is still a valid two-decimal value.
+    expect(isValidDailyValue('custom', 'gte', 2.2)).toBe(true);
+    expect(isValidDailyValue('custom', 'gte', 0.07)).toBe(true);
     expect(isValidDailyValue('custom', 'gte', 2.555)).toBe(false);
     expect(isValidDailyValue('pushups', 'gte', Number.NaN)).toBe(false);
   });
