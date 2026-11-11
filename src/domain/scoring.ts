@@ -178,9 +178,7 @@ export function computeStandings(inputs: readonly StandingInput[], requiredDays:
   const ranked = rows
     .filter((row) => !row.removed)
     .sort((a, b) => b.successfulDays - a.successfulDays || (a.participantId < b.participantId ? -1 : 1));
-  const removed = rows
-    .filter((row) => row.removed)
-    .sort((a, b) => b.successfulDays - a.successfulDays || (a.participantId < b.participantId ? -1 : 1));
+  const removed = rows.filter((row) => row.removed).sort((a, b) => (a.participantId < b.participantId ? -1 : 1));
 
   const out: StandingRow[] = ranked.map((row) => {
     const higher = ranked.filter((other) => other.successfulDays > row.successfulDays).length;
