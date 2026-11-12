@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 
 import { describeError } from '@/domain/errors';
@@ -70,7 +70,7 @@ export function ErrorState({ error, onRetry, compact = false }: ErrorStateProps)
 
 function SkeletonBlock({ height, width, round = radius.lg }: { height: number; width?: number | `${number}%`; round?: number }) {
   const reduced = useReducedMotion();
-  const opacity = useRef(new Animated.Value(1)).current;
+  const [opacity] = useState(() => new Animated.Value(1));
   useEffect(() => {
     if (reduced) return undefined;
     const loop = Animated.loop(

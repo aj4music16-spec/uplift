@@ -1,10 +1,3 @@
-import { Screen, TitleBlock } from '@/components/Screen';
+import { ActivityScreen } from '@/features/notifications/ActivityScreen';
 
-/** Placeholder until the feature screen lands. */
-export default function Placeholder() {
-  return (
-    <Screen tabBarInset>
-      <TitleBlock title="activity" size="display" />
-    </Screen>
-  );
-}
+export default ActivityScreen;

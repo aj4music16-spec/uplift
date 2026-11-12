@@ -4,6 +4,7 @@ import { useCallback, useRef } from 'react';
 import type { DayCell, DayDetail } from '@/data/types';
 import {
   dayWindow,
+  decisionWindow,
   disputeGate,
   formatDateKey,
   formatDateTime,
@@ -158,4 +159,15 @@ export function parseAmount(text: string, allowDecimals: boolean): number | null
   if (!Number.isFinite(value) || value < 0) return null;
   if (!allowDecimals && !Number.isInteger(value)) return null;
   return value;
+}
+
+/** "You can dispute until Thu, Nov 12, 2:00 PM EST" / "The dispute window closed …". */
+export function decisionWindowLabel(day: DayDetail, now: Date): string {
+  if (!day.record?.decidedAt) return '';
+  const window = decisionWindow(day.record, now);
+  if (!window.closesAt) return '';
+  const when = formatInstant(window.closesAt, day.timezone);
+  if (window.open) return `You can dispute this decision until ${when}.`;
+  const acknowledged = day.record.acknowledgedAt != null && Date.parse(day.record.acknowledgedAt) >= Date.parse(day.record.decidedAt);
+  return acknowledged ? 'You accepted this decision.' : `The dispute window closed ${when}.`;
 }

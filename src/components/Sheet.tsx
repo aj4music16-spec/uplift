@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Dimensions, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -32,11 +32,13 @@ export function Sheet({ visible, onClose, title, subtitle, children, footer, tes
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
   const [mounted, setMounted] = useState(visible);
-  const progress = useRef(new Animated.Value(0)).current;
+  const [progress] = useState(() => new Animated.Value(0));
+
+  // Mount as soon as it becomes visible (derived during render, not in an effect).
+  if (visible && !mounted) setMounted(true);
 
   useEffect(() => {
     if (visible) {
-      setMounted(true);
       Animated.timing(progress, { toValue: 1, duration: reduced ? 0 : motion.base, useNativeDriver: true }).start();
     } else if (mounted) {
       Animated.timing(progress, { toValue: 0, duration: reduced ? 0 : motion.fast, useNativeDriver: true }).start(({ finished }) => {
@@ -130,9 +132,12 @@ export function ConfirmationSheet({
   testID,
 }: ConfirmationSheetProps) {
   const [text, setText] = useState('');
-  useEffect(() => {
+  // Start every opening with an empty reason.
+  const [wasVisible, setWasVisible] = useState(visible);
+  if (wasVisible !== visible) {
+    setWasVisible(visible);
     if (!visible) setText('');
-  }, [visible]);
+  }
   const needsReason = !!reason && reason.required !== false;
   const blocked = needsReason && text.trim().length < LIMITS.minReasonLength;
   return (

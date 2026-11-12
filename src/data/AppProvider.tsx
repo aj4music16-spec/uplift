@@ -1,7 +1,7 @@
 import { QueryCache, QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query';
 import * as Localization from 'expo-localization';
 import type { ReactNode } from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AppError, toAppError } from '@/domain/errors';
 import { isValidTimeZone } from '@/domain/time';
@@ -51,6 +51,10 @@ interface AppContextValue {
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
+
+/** Set by the provider; called by the query cache when the server says the session ended. */
+let sessionExpiredHandler: () => void = () => undefined;
+const onSessionExpired = () => sessionExpiredHandler();
 const INVITE_KEY = 'uplift.pending-invite';
 
 export function deviceTimeZone(): string {
@@ -67,15 +71,14 @@ export function deviceTimeZone(): string {
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const mode: 'live' | 'demo' = config.demoMode ? 'demo' : 'live';
-  const timeZone = useMemo(deviceTimeZone, []);
+  const [timeZone] = useState(deviceTimeZone);
   const [phase, setPhase] = useState<Phase>('loading');
   const [session, setSession] = useState<AuthSession | null>(null);
   const [notice, setNotice] = useState<'expired' | null>(null);
   const [pendingInvite, setPendingInviteState] = useState<string | null>(null);
   const [demo, setDemo] = useState<Demo | null>(null);
   const [persona, setPersona] = useState<PersonKey>('aj');
-  const expiredRef = useRef<() => void>(() => undefined);
-
+  
   const queryClient = useMemo(
     () =>
       new QueryClient({
@@ -91,12 +94,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         },
         queryCache: new QueryCache({
           onError: (error) => {
-            if (toAppError(error).code === 'SESSION_EXPIRED') expiredRef.current();
+            if (toAppError(error).code === 'SESSION_EXPIRED') onSessionExpired();
           },
         }),
         mutationCache: new MutationCache({
           onError: (error) => {
-            if (toAppError(error).code === 'SESSION_EXPIRED') expiredRef.current();
+            if (toAppError(error).code === 'SESSION_EXPIRED') onSessionExpired();
           },
         }),
       }),
@@ -156,11 +159,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
   }, [live, clearUserState]);
 
-  expiredRef.current = () => {
-    if (!live || phase !== 'signed_in') return;
-    setNotice('expired');
-    void live.auth.signOut();
-  };
+  useEffect(() => {
+    sessionExpiredHandler = () => {
+      if (!live || phase !== 'signed_in') return;
+      setNotice('expired');
+      void live.auth.signOut();
+    };
+    return () => {
+      sessionExpiredHandler = () => undefined;
+    };
+  }, [live, phase]);
 
   /* Demo */
   const buildDemo = useCallback(async () => {
@@ -172,13 +180,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (mode !== 'demo') return;
     let alive = true;
-    void buildDemo().then(() => {
-      if (alive) setPhase('signed_out');
+    void createDemo({ timeZone }).then((built) => {
+      if (!alive) return;
+      setDemo(built);
+      setPhase('signed_out');
     });
     return () => {
       alive = false;
     };
-  }, [mode, buildDemo]);
+  }, [mode, timeZone]);
 
   const demoControls = useMemo<DemoControls | null>(() => {
     if (mode !== 'demo' || !demo) return null;

@@ -155,7 +155,6 @@ export function useNow(intervalMs = 30_000): Date {
   const repo = useRepository();
   const [now, setNow] = useState(() => repo.now());
   useEffect(() => {
-    setNow(repo.now());
     const timer = setInterval(() => setNow(repo.now()), intervalMs);
     return () => clearInterval(timer);
   }, [repo, intervalMs]);

@@ -25,7 +25,7 @@ export interface TimeZonePickerProps {
 /** Searchable list of IANA time zones. Only valid zones can be chosen. */
 export function TimeZonePicker({ value, onSelect, suggested, testID = 'timezone' }: TimeZonePickerProps) {
   const [query, setQuery] = useState('');
-  const zones = useMemo(allTimeZones, []);
+  const zones = useMemo(() => allTimeZones(), []);
   const now = useMemo(() => new Date(), []);
   const results = useMemo(() => {
     const q = query.trim().toLowerCase().replace(/\s+/g, '_');
