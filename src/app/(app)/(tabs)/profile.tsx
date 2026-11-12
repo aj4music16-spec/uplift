@@ -1,10 +1,3 @@
-import { Screen, TitleBlock } from '@/components/Screen';
+import { ProfileScreen } from '@/features/profile/ProfileScreen';
 
-/** Placeholder until the feature screen lands. */
-export default function Placeholder() {
-  return (
-    <Screen tabBarInset>
-      <TitleBlock title="profile" size="display" />
-    </Screen>
-  );
-}
+export default ProfileScreen;
