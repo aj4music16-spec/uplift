@@ -79,9 +79,9 @@
     "db:reset": "supabase db reset",
     "db:env": "node scripts/write-local-env.mjs",
     "e2e:web": "node e2e/run.mjs",
-    "screenshots": "node e2e/screenshots.mjs",
     "retention": "node scripts/retention.mjs",
-    "check": "npm run lint && npm run typecheck && npm test"
+    "check": "npm run lint && npm run typecheck && npm test",
+    "seed:dev": "tsx scripts/seed-dev.ts"
   },
   "private": true
 }
