@@ -171,3 +171,19 @@ export function decisionWindowLabel(day: DayDetail, now: Date): string {
   const acknowledged = day.record.acknowledgedAt != null && Date.parse(day.record.acknowledgedAt) >= Date.parse(day.record.decidedAt);
   return acknowledged ? 'You accepted this decision.' : `The dispute window closed ${when}.`;
 }
+
+const OUTCOME_WORD: Record<string, string> = {
+  success: 'Completed',
+  fail: 'Not met',
+  missed: 'Missed',
+  open: 'In progress',
+  pending: 'Awaiting review',
+  late_pending: 'Late — awaiting admin',
+  rejected: 'Proof rejected',
+};
+
+/** Words for a stored or historical outcome. */
+export function outcomeWord(outcome: string | null | undefined): string {
+  if (!outcome) return 'No result';
+  return OUTCOME_WORD[outcome] ?? outcome;
+}

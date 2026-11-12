@@ -19,7 +19,7 @@ import { space } from '@/theme/tokens';
 
 import { DataError } from './common';
 import { ServerEvidence } from './EvidenceImage';
-import { decisionWindowLabel, disputeGateForDay, formatInstant, gateForDay, valueLabel } from './logic';
+import { decisionWindowLabel, disputeGateForDay, formatInstant, gateForDay, outcomeWord, valueLabel } from './logic';
 import { describeSubmission, SubmissionState } from './SubmissionState';
 
 const SUBMISSION_STATUS: Record<SubmissionView['status'], string> = {
@@ -30,21 +30,6 @@ const SUBMISSION_STATUS: Record<SubmissionView['status'], string> = {
   declined: 'Late request declined',
   superseded: 'Replaced by a newer version',
 };
-
-const OUTCOME_WORD: Record<string, string> = {
-  success: 'Completed',
-  fail: 'Not met',
-  missed: 'Missed',
-  open: 'In progress',
-  pending: 'Awaiting review',
-  late_pending: 'Late — awaiting admin',
-  rejected: 'Proof rejected',
-};
-
-export function outcomeWord(outcome: string | null | undefined): string {
-  if (!outcome) return 'No result';
-  return OUTCOME_WORD[outcome] ?? outcome;
-}
 
 export function DayDetailScreen() {
   const params = useLocalSearchParams<{ challengeId: string; date: string; participantId?: string }>();
