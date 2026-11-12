@@ -12,7 +12,7 @@ import { ConfirmationSheet } from '@/components/Sheet';
 import { LoadingState, QueryBoundary } from '@/components/States';
 import { Text } from '@/components/Text';
 import { useApp } from '@/data/AppProvider';
-import { useAction, useChallenge, useNow } from '@/data/hooks';
+import { useAction, useChallenge } from '@/data/hooks';
 import type { BlockerView, ChallengeDetail, StandingView } from '@/data/types';
 import { describeError } from '@/domain/errors';
 import { formatDateKey, formatDateRange, formatDateTime, pluralize } from '@/domain/format';
@@ -64,7 +64,6 @@ const BLOCKER_ICON = {
 function ResultsContent({ challenge }: { challenge: ChallengeDetail }) {
   const router = useRouter();
   const { session } = useApp();
-  const now = useNow();
   const [rematchOpen, setRematchOpen] = useState(false);
   const [finalizeError, setFinalizeError] = useState<unknown>(null);
 

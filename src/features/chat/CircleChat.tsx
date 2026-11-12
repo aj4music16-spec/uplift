@@ -1,6 +1,6 @@
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
@@ -59,14 +59,6 @@ export function CircleChat({ circleId, pinned }: CircleChatProps) {
   const serverItems = useMemo(() => messages.data?.pages.flatMap((page) => page.items) ?? [], [messages.data]);
   const serverClientIds = useMemo(() => new Set(serverItems.map((m) => m.clientId).filter((id): id is string => !!id)), [serverItems]);
 
-  // Once the server rows include a sent message, the local copy is no longer needed.
-  useEffect(() => {
-    setOutbox((current) => {
-      const next = current.filter((item) => !(item.state === 'sent' && serverClientIds.has(item.clientId)));
-      return next.length === current.length ? current : next;
-    });
-  }, [serverClientIds]);
-
   const rows = useMemo<Row[]>(() => {
     const local = outbox
       .filter((item) => !serverClientIds.has(item.clientId))
@@ -90,7 +82,11 @@ export function CircleChat({ circleId, pinned }: CircleChatProps) {
     if (!text || text.length > LIMITS.maxMessageLength) return;
     // The same clientId is reused for every retry, so the server deduplicates.
     const clientId = Crypto.randomUUID();
-    setOutbox((current) => [...current, { clientId, text, createdAt: new Date().toISOString(), state: 'pending' }]);
+    // Local copies the server rows already include are no longer needed.
+    setOutbox((current) => [
+      ...current.filter((item) => !(item.state === 'sent' && serverClientIds.has(item.clientId))),
+      { clientId, text, createdAt: new Date().toISOString(), state: 'pending' },
+    ]);
     setDraft('');
     deliver(clientId, text);
   };
