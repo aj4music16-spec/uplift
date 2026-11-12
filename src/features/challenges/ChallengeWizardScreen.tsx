@@ -2,8 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { DemoRewardBadge, HabitBadge } from '@/components/Badges';
-import { Banner } from '@/components/Badges';
+import { Banner, DemoRewardBadge, HabitBadge } from '@/components/Badges';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { ChoiceRow, SelectField, Stepper, SwitchRow, TextField } from '@/components/Fields';
@@ -22,7 +21,7 @@ import { formatDateKey, formatDateRange, timeZoneAbbreviation, timeZoneCity } fr
 import { HABITS, describeGoal, formatMinutes, formatNumber, verificationLabel } from '@/domain/habits';
 import { computeRewardPreview, DEMO_REWARD_LABEL, formatBps, formatCents, ILLUSTRATIVE_FEE_BPS, ILLUSTRATIVE_FEE_LABEL } from '@/domain/rewards';
 import { allowedVerifications, defaultTerms, validateName, validateTerms, validateTimeZone, type ValidationIssue } from '@/domain/rules';
-import { addDays, compareDateKeys, dateKeyAt, durationDays } from '@/domain/time';
+import { addDays, dateKeyAt, durationDays } from '@/domain/time';
 import { HABIT_TYPES, LIMITS, type Comparator, type HabitType, type RewardMode, type Verification } from '@/domain/types';
 import { colors, radius, space } from '@/theme/tokens';
 
