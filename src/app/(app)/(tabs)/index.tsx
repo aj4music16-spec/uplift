@@ -1,10 +1,3 @@
-import { Screen, TitleBlock } from '@/components/Screen';
+import { HomeScreen } from '@/features/home/HomeScreen';
 
-/** Placeholder until the feature screen lands. */
-export default function Placeholder() {
-  return (
-    <Screen tabBarInset>
-      <TitleBlock title="index" size="display" />
-    </Screen>
-  );
-}
+export default HomeScreen;
