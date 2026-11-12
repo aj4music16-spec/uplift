@@ -139,17 +139,17 @@ export function auditSentence(event: AuditEventView, ctx: AuditContext): string 
   }
 }
 
-function iconFor(action: string) {
-  if (action === 'day.overridden' || action === 'review.value_corrected') return SlidersHorizontal;
-  if (action.startsWith('review.') || action.startsWith('late.')) return ShieldCheck;
-  if (action === 'evidence.viewed') return Eye;
-  if (action.startsWith('dispute.')) return Flag;
-  return History;
+function ActionIcon({ action }: { action: string }) {
+  const props = { size: 17, color: colors.ink, strokeWidth: 2.4 };
+  if (action === 'day.overridden' || action === 'review.value_corrected') return <SlidersHorizontal {...props} />;
+  if (action.startsWith('review.') || action.startsWith('late.')) return <ShieldCheck {...props} />;
+  if (action === 'evidence.viewed') return <Eye {...props} />;
+  if (action.startsWith('dispute.')) return <Flag {...props} />;
+  return <History {...props} />;
 }
 
 /** One row of the change history: who did what, why, and when. */
 export function AuditEvent({ event, context }: { event: AuditEventView; context: AuditContext }) {
-  const Icon = iconFor(event.action);
   const sentence = auditSentence(event, context);
   const adjusted = event.action === 'day.overridden';
   return (
@@ -158,7 +158,7 @@ export function AuditEvent({ event, context }: { event: AuditEventView; context:
         <Avatar avatar={event.actor.avatar} ghost={event.actor.deleted} size={36} name="" />
       ) : (
         <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>
-          <Icon size={17} color={colors.ink} strokeWidth={2.4} />
+          <ActionIcon action={event.action} />
         </View>
       )}
       <View style={{ flex: 1, gap: 4 }}>

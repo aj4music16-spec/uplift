@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 
 import { Banner } from '@/components/Badges';
@@ -50,19 +50,16 @@ export interface OverrideSheetProps {
 
 /** An admin sets a day's result by hand. Always labeled "Admin adjusted", always with a reason. */
 export function OverrideSheet({ visible, onClose, target, onDone }: OverrideSheetProps) {
+  // The form is mounted fresh each time it opens, so it never shows a previous attempt.
+  if (!visible || !target) return null;
+  return <OverrideForm onClose={onClose} target={target} onDone={onDone} />;
+}
+
+function OverrideForm({ onClose, target, onDone }: { onClose: () => void; target: OverrideTarget; onDone?: (day: DayDetail) => void }) {
   const [outcome, setOutcome] = useState<'success' | 'fail'>('success');
   const [value, setValue] = useState<number | null>(null);
   const [reason, setReason] = useState('');
   const [conflict, setConflict] = useState(false);
-
-  useEffect(() => {
-    if (visible) {
-      setOutcome('success');
-      setValue(null);
-      setReason('');
-      setConflict(false);
-    }
-  }, [visible]);
 
   const action = useAction((repo, input: Parameters<typeof repo.overrideDay>[0]) => repo.overrideDay(input), {
     onSuccess: (day) => {
@@ -72,7 +69,6 @@ export function OverrideSheet({ visible, onClose, target, onDone }: OverrideShee
     onError: (error) => setConflict(toAppError(error).code === 'REVISION_CONFLICT'),
   });
 
-  if (!target) return null;
   const bool = target.comparator === 'bool';
   const reasonOk = reason.trim().length >= LIMITS.minReasonLength;
   const mismatch = value != null && !bool && meetsTarget(target.comparator, target.target, value) !== (outcome === 'success');
@@ -81,7 +77,7 @@ export function OverrideSheet({ visible, onClose, target, onDone }: OverrideShee
 
   return (
     <Sheet
-      visible={visible}
+      visible
       onClose={onClose}
       title="Adjust result"
       subtitle={`${target.personName} · ${formatDateKey(target.date)}${target.currentLabel ? ` · now: ${target.currentLabel}` : ''}`}

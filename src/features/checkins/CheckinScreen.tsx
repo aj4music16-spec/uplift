@@ -503,7 +503,7 @@ function RepsPanel({ day }: { day: DayDetail }) {
 /** A small check that pops in once. Instant when Reduce Motion is on. */
 function CompletionMark({ positive }: { positive: boolean }) {
   const reduced = useReducedMotion();
-  const progress = useRef(new Animated.Value(reduced ? 1 : 0)).current;
+  const [progress] = useState(() => new Animated.Value(reduced ? 1 : 0));
   useEffect(() => {
     if (reduced) {
       progress.setValue(1);

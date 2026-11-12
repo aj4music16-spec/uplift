@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
@@ -191,14 +191,15 @@ function QueueBody({ detail, queue, refreshing, onRefresh }: { detail: Challenge
         </>
       ) : null}
 
-      <RejectSheet
-        visible={sheet?.kind === 'reject'}
-        preset={sheet?.kind === 'reject' ? sheet.preset : undefined}
-        own={sheet?.item.own ?? false}
-        loading={review.isPending}
-        onClose={() => setSheet(null)}
-        onConfirm={(reason) => sheet && review.mutate({ submissionId: sheet.item.submissionId, decision: 'reject', reason, expectedRevision: sheet.item.recordRevision })}
-      />
+      {sheet?.kind === 'reject' ? (
+        <RejectSheet
+          preset={sheet.preset}
+          own={sheet.item.own}
+          loading={review.isPending}
+          onClose={() => setSheet(null)}
+          onConfirm={(reason) => review.mutate({ submissionId: sheet.item.submissionId, decision: 'reject', reason, expectedRevision: sheet.item.recordRevision })}
+        />
+      ) : null}
       {sheet?.kind === 'correct' ? (
         <CorrectSheet
           detail={detail}
@@ -240,15 +241,12 @@ function QueueBody({ detail, queue, refreshing, onRefresh }: { detail: Challenge
   );
 }
 
-function RejectSheet({ visible, preset, own, loading, onClose, onConfirm }: { visible: boolean; preset?: string; own: boolean; loading: boolean; onClose: () => void; onConfirm: (reason: string) => void }) {
-  const [reason, setReason] = useState('');
-  useEffect(() => {
-    if (visible) setReason(preset ?? '');
-  }, [visible, preset]);
+function RejectSheet({ preset, own, loading, onClose, onConfirm }: { preset?: string; own: boolean; loading: boolean; onClose: () => void; onConfirm: (reason: string) => void }) {
+  const [reason, setReason] = useState(preset ?? '');
   const ok = reason.trim().length >= LIMITS.minReasonLength;
   return (
     <Sheet
-      visible={visible}
+      visible
       onClose={onClose}
       title="Reject proof"
       subtitle="The player sees your reason and can send a new version. The group never sees it."

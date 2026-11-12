@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -53,21 +53,19 @@ export function AmountField({ label, unit, habitType, value, onChange, helper, t
   const [mins, setMins] = useState(value != null && minutesMode ? String(value % 60) : '');
   const [text, setText] = useState(value != null && !minutesMode ? String(value) : '');
 
-  // Follow outside changes (quick-add buttons, a reset after success).
-  useEffect(() => {
+  // Follow outside changes (quick-add buttons, a reset after success) without an effect.
+  const [synced, setSynced] = useState(value);
+  if (value !== synced) {
+    setSynced(value);
     if (minutesMode) {
-      const current = parseHoursMinutes(hours, mins);
-      if (current !== value) {
+      if (parseHoursMinutes(hours, mins) !== value) {
         setHours(value == null ? '' : String(Math.floor(value / 60)));
         setMins(value == null ? '' : String(value % 60));
       }
-    } else {
-      const current = parseAmount(text, habitType === 'custom');
-      if (current !== value) setText(value == null ? '' : String(value));
+    } else if (parseAmount(text, habitType === 'custom') !== value) {
+      setText(value == null ? '' : String(value));
     }
-    // Only react to the value coming from outside.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }
 
   if (minutesMode) {
     const parsed = parseHoursMinutes(hours, mins);
