@@ -19,6 +19,9 @@ import {
 import type { NotificationView } from '@/data/types';
 import { formatDateKey } from '@/domain/format';
 
+/** Ends a free-text reason with exactly one period. */
+const sentence = (text: string): string => (/[.!?…]$/.test(text.trim()) ? text.trim() : `${text.trim()}.`);
+
 export interface NotificationCopy {
   title: string;
   body: string | null;
@@ -91,7 +94,7 @@ export function describeNotification(n: NotificationView): NotificationCopy {
     case 'review_rejected':
       return {
         title: `Proof not accepted for ${date}`,
-        body: `${challenge}.${reason ? ` Reason: ${reason}.` : ''} Only you and the challenge admins see this.`,
+        body: `${challenge}.${reason ? ` Reason: ${sentence(reason)}` : ''} Only you and the challenge admins see this.`,
         icon: CircleX,
         href: dayHref,
       };
@@ -122,7 +125,7 @@ export function describeNotification(n: NotificationView): NotificationCopy {
     case 'rule_change_proposed':
       return {
         title: `${actor} proposed new rules for ${challenge}`,
-        body: `${reason ? `Reason: ${reason}. ` : ''}Everyone has to accept before anything changes.`,
+        body: `${reason ? `Reason: ${sentence(reason)} ` : ''}Everyone has to accept before anything changes.`,
         icon: FileText,
         href: rulesHref,
       };
