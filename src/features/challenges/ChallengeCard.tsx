@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 import { AvatarStack } from '@/components/Avatar';
 import { ChallengeStatusBadge, DemoRewardBadge, HabitBadge } from '@/components/Badges';
@@ -12,7 +12,7 @@ import type { ChallengeCard as ChallengeCardData } from '@/data/types';
 import { daysLeftLabel, formatDateRange, pluralize, startsInLabel } from '@/domain/format';
 import { shortGoal } from '@/domain/habits';
 import { dateKeyAt } from '@/domain/time';
-import { colors, space } from '@/theme/tokens';
+import { colors, gutter, layout, space } from '@/theme/tokens';
 
 export interface ChallengeCardProps {
   card: ChallengeCardData;
@@ -54,6 +54,12 @@ export function ChallengeCard({ card, now, action, showCircle = false, testID }:
   const participating = !!card.viewer.participantId && !card.viewer.removed && card.myDays.length > 0;
   const pending = card.viewer.pendingDays;
   const people = card.participants;
+  const { width } = useWindowDimensions();
+  // One row per week, sized to fit beside the tally so dots never wrap into a stray last row.
+  const weeks: (typeof card.myDays)[] = [];
+  for (let i = 0; i < card.myDays.length; i += 7) weeks.push(card.myDays.slice(i, i + 7));
+  const dotRoom = Math.min(width, layout.maxWidth) - gutter * 2 - space.xl * 2 - space.lg - 64;
+  const dotSize = Math.max(18, Math.min(30, Math.floor((dotRoom - 6 * space.sm) / 7)));
 
   return (
     <Card
@@ -69,13 +75,21 @@ export function ChallengeCard({ card, now, action, showCircle = false, testID }:
             {showCircle ? `${card.circleName} · ` : ''}
             {goal} · {timing}
           </Text>
+          {card.status !== 'active' ? (
+            <View style={{ flexDirection: 'row', marginTop: space.xs }}>
+              <ChallengeStatusBadge status={card.status} />
+            </View>
+          ) : null}
         </View>
-        {card.status !== 'active' ? <ChallengeStatusBadge status={card.status} /> : null}
       </View>
 
       {participating ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.lg }}>
-          <DayProgress days={card.myDays} size={30} style={{ flex: 1 }} />
+          <View style={{ flex: 1, gap: space.sm }} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
+            {weeks.map((week) => (
+              <DayProgress key={week[0]!.date} days={week} size={dotSize} />
+            ))}
+          </View>
           <DayTally done={card.viewer.successfulDays} total={card.myDays.length} pending={pending} />
         </View>
       ) : null}
