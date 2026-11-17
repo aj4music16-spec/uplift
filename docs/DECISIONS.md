@@ -164,3 +164,17 @@ no deep-link or universal-link setup is required for the beta.
 Reminders are local notifications scheduled on the device (opt-in, generic
 text, rescheduled on every change). Server push is deferred and never shown as
 delivered.
+
+### P-015 — Refinements made during visual QA (2026-11-17)
+Small behaviour changes that came out of the screen review, recorded so they are
+not mistaken for layout-only edits:
+- A challenge in review shows a "Results so far" row; rank is hidden while a
+  challenge is still scheduled; finished challenges show "Ended / Off" stats.
+- The reading timer in the check-in screen was rewritten (same rules, same
+  server call).
+- Challenge and Circle section tabs are equal-width only when the window is at
+  least 360pt wide and text is not enlarged; otherwise the row scrolls.
+- The "SYNTHETIC SAMPLE" mark on Demo Mode proof images is a band under the
+  image content instead of a stamp over the total, so the number stays readable.
+- An owner can leave a Circle only when no other active members remain (which
+  closes it); otherwise they must transfer ownership first. The button explains this.

@@ -18,19 +18,20 @@ _Last updated 2026-11-17. Nothing here is deployed, published to a store, or con
 
 - Email + password sign-up with a 6-digit emailed code, sign-in, password reset, profile setup with a generated avatar.
 - Circles: create, list, overview, members, roles, leave, invite codes/links with preview and expiry.
-- Challenges for screen time, reading, prayer, pushups and custom goals: 5-step wizard, draft → published → active → finished, accepting rules, one immutable time zone, rematch.
-- Daily check-in. Screen time requires a screenshot and can only be submitted after the day has ended, until noon the next local day (late requests need admin approval). Other habits are self-reported where the rules allow it.
+- Challenges for screen time, reading, prayer, pushups and custom goals: 5-step wizard, draft → scheduled → active → review → completed (or canceled), accepting rules, one immutable time zone, rematch.
+- Challenge administration: rule-change proposals that need every participant's agreement (and can be withdrawn), cancel a challenge, remove a participant, appoint and revoke challenge admins, transfer Circle ownership.
+- Daily check-in. Screen time requires a screenshot and can only be submitted after the day has ended, until noon the next local day (late requests need admin approval). Other habits are self-reported where the rules allow it, with a reading timer and pushup rep counting. Admins accept or decline late proof.
 - Admin review queue: approve (the verified value is then compared with the target — approval is not success), reject with a reason, resubmission, admin adjustment with a required reason, "Admin self-reviewed" label, 24-hour dispute window, finalization.
 - Append-only change history written in the same transaction as each correction.
 - Standings from successful days only, shared ranks for ties, pending days shown separately and never scored.
 - Circle chat (Realtime on the real backend), Activity feed, results, personal history.
-- Privacy and account: data summary, account deletion (tombstone, evidence removed first), local opt-in reminders.
+- Privacy and account: plain-language privacy summary, account deletion (tombstone, evidence removed first), local opt-in reminders.
 - Authorization is server-side: every write is a server function that derives identity from the session; row-level security on every table; evidence in a private bucket behind short-lived signed URLs.
 
 ## Demo only
 
 - **Demo Mode** (`npm run web:demo`): in-memory sample Circle "The Inner Circle", labeled on every screen, never contacts a backend. Persona switch, demo clock and reset live behind the banner. The sample data is a replay through the real rules, not fixed numbers.
-- **Reward previews** (sponsor / shared pot): screens labeled "Demo reward — no money collected" with "Illustrative fee, not final pricing". No live reward mode exists in the schema; the server refuses previews unless a local-only flag is on. No money moves anywhere.
+- **Reward previews** (sponsor / shared pot): screens labeled "Demo reward — no money collected" with "Illustrative fee, not final pricing". No live reward mode exists in the schema; the server refuses previews unless a server-side flag is on; it is off in every migration and turned on only by the local seed. No money moves anywhere.
 - **Synthetic screenshot sample** for screen-time proof, Demo Mode only, watermarked "SYNTHETIC SAMPLE".
 
 ## Deferred / not built
@@ -78,8 +79,8 @@ See `README.md` section 3 and `docs/RELEASE_CHECKLIST.md` track A: a hosted Supa
 
 ## Visual review
 
-All 21 screens were captured at 390×844 and 320×568 and every image was looked
-at. Design rules held on every screen (white background, warm cards, black
+21 key screens were captured (not Privacy, Account, Reminders, Invite preview or Sign-in) at 390×844 and 320×568 and every image was looked
+at. Design rules held on every captured screen (white background, warm cards, black
 primary action, Demo banner, no purple or lime). Seven layout defects were found,
 mostly at 320px; fixes were re-shot and confirmed for the sample-image watermark
 (now a band below the total), the Home "Due" row, the Circle card's Owner pill
