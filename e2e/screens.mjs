@@ -82,19 +82,23 @@ async function openChallenge(name) {
 }
 
 try {
-  // 01 + 21: Welcome, then sign-up before entering the demo.
+  // 21: Demo Mode's Welcome only offers "Explore the demo"; the sign-up route
+  // opens on a separate page, before any demo state exists (it shows the
+  // "Accounts need a backend" state in Demo Mode).
+  await step('21-sign-up', async () => {
+    const signUp = await context.newPage();
+    await signUp.goto(`${BASE}/sign-up`, { waitUntil: 'networkidle', timeout: 180000 });
+    await signUp.getByText('Accounts need a backend').first().waitFor({ timeout: 60000 });
+    await sleep(900);
+    await signUp.screenshot({ path: resolve(OUT, '21-sign-up.png') });
+    report.push('SAVED 21-sign-up');
+    await signUp.close();
+  });
+
+  // 01: Welcome.
   await page.goto(BASE, { waitUntil: 'networkidle', timeout: 180000 });
   await vis('[data-testid="welcome-screen"]').waitFor({ timeout: 60000 });
-  await step('01-welcome', async () => {
-    await shot('01-welcome');
-  });
-  await step('21-sign-up', async () => {
-    await vis('[data-testid="welcome-create-account"]').click();
-    await vis('[data-testid="sign-up-email"]').waitFor({ timeout: 8000 });
-    await shot('21-sign-up');
-    await vis('[data-testid="nav-back"]').click({ timeout: 4000 }).catch(() => page.goBack());
-    await vis('[data-testid="welcome-explore-demo"]').waitFor({ timeout: 8000 });
-  });
+  await step('01-welcome', () => shot('01-welcome'));
 
   // Enter the demo as AJ (admin of Screen Time Showdown).
   await vis('[data-testid="welcome-explore-demo"]').click();
@@ -138,7 +142,7 @@ try {
     await shot('08-challenge-rules');
   });
 
-  await step('19-reward-demo', async () => {
+  await step('18-reward-demo', async () => {
     await vis('[data-testid="challenge-reward"]').click({ timeout: 4000 });
     await sleep(1000);
     await shot('18-reward-demo');
@@ -209,6 +213,8 @@ try {
     await vis('[data-testid="profile-design-lab"]').click({ timeout: 8000 });
     await sleep(1200);
     await shot('20-design-lab');
+    await page.goBack();
+    await sleep(700);
     await backToTabs();
   });
 
