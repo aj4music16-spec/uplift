@@ -60,22 +60,20 @@ export function SyntheticScreenTime({ spec, large = false }: { spec: SyntheticSp
         ))}
       </View>
       <View
-        pointerEvents="none"
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
-        <View
-          style={{
-            transform: [{ rotate: '-22deg' }],
-            borderWidth: 2,
-            borderColor: colors.danger,
-            borderRadius: radius.sm,
-            paddingHorizontal: space.md,
-            paddingVertical: space.xs,
-            backgroundColor: 'rgba(253, 231, 228, 0.82)',
-          }}>
-          <Text variant="labelSmall" color="danger" maxFontSizeMultiplier={1.2}>
-            SYNTHETIC SAMPLE
-          </Text>
-        </View>
+        style={{
+          alignSelf: 'stretch',
+          marginHorizontal: -space.lg * scale,
+          marginBottom: -space.lg * scale,
+          marginTop: space.xs,
+          borderTopWidth: 2,
+          borderTopColor: colors.danger,
+          backgroundColor: 'rgba(253, 231, 228, 0.92)',
+          paddingVertical: space.sm,
+          alignItems: 'center',
+        }}>
+        <Text variant="labelSmall" color="danger" maxFontSizeMultiplier={1.2} align="center">
+          SYNTHETIC SAMPLE
+        </Text>
       </View>
     </View>
   );

@@ -93,7 +93,7 @@ export function deriveActions(cards: readonly ChallengeCard[], now: Date): HomeA
               kind: 'due',
               challengeId: card.id,
               title: card.habitType === 'screen_time' ? `Submit ${dayLabel} screenshot` : `Log ${dayLabel} ${HABIT_NOUN[card.habitType]}`,
-              subtitle: `${card.name} · Due ${formatDateTime(window.deadlineAt, card.timezone)}`,
+              subtitle: `${card.name} · Due ${formatDateTime(window.deadlineAt, card.timezone).replace(/(\d{1,2}:\d{2}) (AM|PM)/, '$1\u00A0$2')}`,
               href: checkinHref(card, day.date),
               urgent: true,
             },

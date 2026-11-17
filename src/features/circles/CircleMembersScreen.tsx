@@ -127,7 +127,7 @@ function Members({ detail, refreshing, onRefresh }: { detail: CircleDetail; refr
               {index > 0 ? <Divider /> : null}
               <ListRow
                 title={isSelf ? `${name} (you)` : name}
-                subtitle={`Joined ${formatDateKey(dateKeyAt(new Date(member.joinedAt), detail.circle.timezone), { weekday: false, year: true })}`}
+                subtitle={`Joined ${formatDateKey(dateKeyAt(new Date(member.joinedAt), detail.circle.timezone), { weekday: false, year: true }).replace(', ', ',\u00A0')}`}
                 leading={<Avatar avatar={member.avatar} ghost={member.deleted} size={44} name="" />}
                 trailing={<RoleBadge role={member.role} />}
                 onPress={canAct ? () => setSelected(member) : undefined}

@@ -66,7 +66,8 @@ export function formatInstant(instant: Date | string, timeZone: string): string 
 
 /** "Due Wed, Nov 11, 12:00 PM EST" */
 export function deadlineLabel(date: string, timeZone: string): string {
-  return `Due ${formatInstant(dayWindow(date, timeZone).deadlineAt, timeZone)}`;
+  // Non-breaking spaces keep "12:00 PM" together on narrow phones.
+  return `Due ${formatInstant(dayWindow(date, timeZone).deadlineAt, timeZone).replace(/(\d{1,2}:\d{2}) (AM|PM)/, '$1\u00A0$2')}`;
 }
 
 export function valueLabel(day: Pick<DayDetail, 'habitType' | 'metricUnit' | 'rule'>, value: number): string {

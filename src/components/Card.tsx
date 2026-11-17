@@ -57,6 +57,8 @@ export interface ListRowProps {
   leading?: ReactNode;
   icon?: LucideIcon;
   trailing?: ReactNode;
+  /** Puts the trailing node under the text instead of beside it, so long titles keep their room. */
+  trailingBelow?: boolean;
   /** Shows a chevron and makes the row tappable. */
   onPress?: () => void;
   tone?: 'default' | 'danger';
@@ -68,7 +70,7 @@ export interface ListRowProps {
 }
 
 /** Comfortable 56pt+ row for settings and member lists. */
-export function ListRow({ title, subtitle, leading, icon: Icon, trailing, onPress, tone = 'default', disabled, disabledNote, accessibilityLabel, testID }: ListRowProps) {
+export function ListRow({ title, subtitle, leading, icon: Icon, trailing, trailingBelow = false, onPress, tone = 'default', disabled, disabledNote, accessibilityLabel, testID }: ListRowProps) {
   const color = disabled ? 'textTertiary' : tone === 'danger' ? 'danger' : 'ink';
   const content = (
     <>
@@ -87,8 +89,9 @@ export function ListRow({ title, subtitle, leading, icon: Icon, trailing, onPres
             {disabled && disabledNote ? disabledNote : subtitle}
           </Text>
         ) : null}
+        {trailingBelow && trailing ? <View style={{ alignSelf: 'flex-start', marginTop: space.xs }}>{trailing}</View> : null}
       </View>
-      {trailing}
+      {trailingBelow ? null : trailing}
       {onPress && !disabled ? <ChevronRight size={18} color={colors.textTertiary} strokeWidth={2.4} /> : null}
     </>
   );

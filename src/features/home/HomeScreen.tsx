@@ -79,6 +79,7 @@ function HomeContent({ data, now }: { data: HomeView; now: Date }) {
                   subtitle={action.subtitle}
                   leading={<HabitBadge habitType={habitFor(action.challengeId)} size={40} />}
                   trailing={action.urgent ? <StatusBadge label="Due" tone="warning" icon={Clock} /> : undefined}
+                  trailingBelow
                   onPress={() => router.push(action.href)}
                   testID={`home-action-${action.key.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`}
                 />

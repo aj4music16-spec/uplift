@@ -74,7 +74,7 @@ export function Button({
         {
           minHeight: HEIGHT[size],
           borderRadius: radius.pill,
-          paddingHorizontal: size === 'sm' ? space.lg : space.xxl,
+          paddingHorizontal: size === 'sm' || fullWidth ? space.lg : space.xxl,
           paddingVertical: space.sm,
           flexDirection: 'row',
           alignItems: 'center',

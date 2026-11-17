@@ -74,7 +74,7 @@ function CircleCard({ circle, onPress }: { circle: CircleSummary; onPress: () =>
         </View>
         <ChevronRight size={20} color={colors.textTertiary} strokeWidth={2.4} style={{ marginTop: 3 }} />
       </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space.md }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: space.md }}>
         <AvatarStack people={circle.members} size={34} max={5} />
         <RoleBadge role={circle.role} />
       </View>

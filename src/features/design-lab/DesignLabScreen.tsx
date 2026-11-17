@@ -120,6 +120,8 @@ function LabTabs({ d }: { d: Direction }) {
     <View
       style={{
         flexDirection: 'row',
+        flexWrap: 'wrap',
+        rowGap: 8,
         gap: d.tabs === 'underline' ? 20 : 8,
         borderBottomWidth: d.tabs === 'underline' ? 1 : 0,
         borderBottomColor: d.colors.hairline,
