@@ -78,4 +78,11 @@ See `README.md` section 3 and `docs/RELEASE_CHECKLIST.md` track A: a hosted Supa
 
 ## Visual review
 
-_Filled in after the screenshot pass._
+All 21 screens were captured at 390×844 and 320×568 and every image was looked
+at. Design rules held on every screen (white background, warm cards, black
+primary action, Demo banner, no purple or lime). Seven layout defects were found,
+mostly at 320px; fixes were re-shot and confirmed for the sample-image watermark
+(now a band below the total), the Home "Due" row, the Circle card's Owner pill
+and the pinned footer button. Left as is: the wizard's step pills and the review
+filter row scroll horizontally by design; only the first viewport of long
+screens was captured.
