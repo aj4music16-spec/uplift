@@ -236,8 +236,8 @@ export function ChallengeDetailScreen() {
   const now = useNow();
   const [tab, setTab] = useState<Tab>('progress');
   // Equal-width tabs when they fit; on narrow phones the row scrolls instead of squeezing labels.
-  const { width: windowWidth } = useWindowDimensions();
-  const stretchTabs = windowWidth >= 360;
+  const { width: windowWidth, fontScale } = useWindowDimensions();
+  const stretchTabs = windowWidth >= 360 && fontScale <= 1.1;
   const [joining, setJoining] = useState(false);
   const detail = query.data;
 

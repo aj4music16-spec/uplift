@@ -106,6 +106,9 @@ function Members({ detail, refreshing, onRefresh }: { detail: CircleDetail; refr
     return rank[a.role] - rank[b.role] || a.displayName.localeCompare(b.displayName);
   });
   const actionsFor = selected ? allowedActions(role, selected, selected.userId === session?.userId) : null;
+  // The server refuses LAST_OWNER only while other active members remain; a sole owner may leave (closing the Circle).
+  const otherMemberCount = detail.members.filter((m) => m.userId !== session?.userId).length;
+  const blockLeave = role === 'owner' && otherMemberCount > 0;
 
   return (
     <Screen
@@ -147,12 +150,12 @@ function Members({ detail, refreshing, onRefresh }: { detail: CircleDetail; refr
           icon={LogOut}
           variant="danger"
           size="md"
-          disabled={role === 'owner'}
+          disabled={blockLeave}
           disabledReason="As the owner, transfer ownership to another member before leaving."
           onPress={() => setConfirm({ kind: 'leave' })}
           testID="members-leave"
         />
-        {role === 'owner' ? (
+        {blockLeave ? (
           <Text variant="caption" color="textSecondary" align="center">
             As the owner, transfer ownership to another member before leaving.
           </Text>
@@ -244,7 +247,11 @@ function Members({ detail, refreshing, onRefresh }: { detail: CircleDetail; refr
         visible={confirm?.kind === 'leave'}
         onClose={() => setConfirm(null)}
         title={`Leave ${detail.circle.name}?`}
-        message="You’ll leave its live challenges and lose access to its chat. Someone will need to invite you to come back."
+        message={
+          role === 'owner' && otherMemberCount === 0
+            ? 'You’re the last member, so leaving closes this Circle and cancels its open challenges.'
+            : 'You’ll leave its live challenges and lose access to its chat. Someone will need to invite you to come back.'
+        }
         confirmLabel="Leave Circle"
         confirmVariant="danger"
         loading={leave.isPending}

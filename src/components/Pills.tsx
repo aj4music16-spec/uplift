@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Pressable, ScrollView, View, type ScrollViewInstance, type StyleProp, type ViewStyle } from 'react-native';
 
 import { colors, radius, shadow, space } from '@/theme/tokens';
@@ -49,16 +49,16 @@ export function PillTabs<T extends string>({
   const scrollRef = useRef<ScrollViewInstance>(null);
   const layouts = useRef<Record<string, { x: number; width: number }>>({});
   const viewport = useRef({ offset: 0, width: 0 });
-  const revealSelected = () => {
+  const revealSelected = useCallback(() => {
     const item = layouts.current[value];
     const { offset, width } = viewport.current;
     if (!item || width === 0) return;
     if (item.x - space.xl < offset) scrollRef.current?.scrollTo({ x: Math.max(0, item.x - space.xl), animated: true });
     else if (item.x + item.width + space.xl > offset + width) scrollRef.current?.scrollTo({ x: item.x + item.width + space.xl - width, animated: true });
-  };
+  }, [value]);
   useEffect(() => {
     if (!stretch) revealSelected();
-  });
+  }, [value, stretch, revealSelected]);
   const content = options.map((option) => {
     const selected = option.value === value;
     return (

@@ -43,7 +43,7 @@ export function DemoBanner() {
         <View style={{ height: DEMO_BANNER_HEIGHT, paddingHorizontal: gutter, flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
           <FlaskConical size={14} color={colors.warning} strokeWidth={2.6} />
           <Text variant="captionStrong" color="warning" style={{ flex: 1 }} numberOfLines={1}>
-            Demo Mode · sample data
+            {signedIn && current ? 'Demo Mode · sample data' : 'Demo Mode · sample data, nothing is saved'}
           </Text>
           {signedIn && current ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -59,7 +59,7 @@ export function DemoBanner() {
         visible={open}
         onClose={() => setOpen(false)}
         title="Demo tools"
-        subtitle={`Everything here is sample data on this device. No account, no server, no money. Demo clock: ${formatDateTime(now, deviceTimeZone)}.`}
+        subtitle={`Everything here is sample data on this device. Nothing is saved or sent anywhere. No account, no server, no money. Demo clock: ${formatDateTime(now, deviceTimeZone)}.`}
         testID="demo-tools">
         {demo ? (
           <>

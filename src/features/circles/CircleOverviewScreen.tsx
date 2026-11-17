@@ -99,8 +99,8 @@ export function CircleOverviewScreen() {
   const now = useNow();
   const [tab, setTab] = useState<Tab>(isTab(params.tab) ? params.tab : 'challenges');
   // Equal-width tabs when they fit; on narrow phones the row scrolls instead of squeezing labels.
-  const { width: windowWidth } = useWindowDimensions();
-  const stretchTabs = windowWidth >= 360;
+  const { width: windowWidth, fontScale } = useWindowDimensions();
+  const stretchTabs = windowWidth >= 360 && fontScale <= 1.1;
   // Follow ?tab= when it changes (adjusting state during render, not in an effect).
   const [seenTabParam, setSeenTabParam] = useState(params.tab);
   if (params.tab !== seenTabParam) {
