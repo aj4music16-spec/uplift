@@ -57,13 +57,13 @@ export function CreateInviteSheet({ visible, onClose, circleId, circleName }: { 
             {formatted}
           </Text>
         </View>
-        <View style={{ flexDirection: 'row', gap: space.sm }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
           <Button
             label="Copy code"
             icon={Copy}
             variant="secondary"
             size="md"
-            style={{ flex: 1 }}
+            style={{ flexGrow: 1, flexBasis: 140 }}
             onPress={() => {
               Clipboard.setStringAsync(formatted)
                 .then(() => toast.success('Code copied'))
@@ -76,7 +76,7 @@ export function CreateInviteSheet({ visible, onClose, circleId, circleName }: { 
             icon={Share2}
             variant="secondary"
             size="md"
-            style={{ flex: 1 }}
+            style={{ flexGrow: 1, flexBasis: 140 }}
             onPress={() => {
               Share.share({ message: `Join ${circleName} on Uplift: ${link}\nOr enter the code ${formatted} in the app.` }).catch(() =>
                 toast.show({ tone: 'error', title: 'Sharing isn’t available here', message: 'Copy the code instead.' }),

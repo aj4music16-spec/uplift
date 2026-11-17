@@ -37,7 +37,7 @@ export function ProfileScreen() {
                   {me.displayName}
                 </Text>
                 <Text variant="body" color="textSecondary" align="center">
-                  {timeZoneCity(me.timezone)} · {timeZoneAbbreviation(now, me.timezone)}
+                  {timeZoneCity(me.timezone) === timeZoneAbbreviation(now, me.timezone) ? timeZoneCity(me.timezone) : `${timeZoneCity(me.timezone)} · ${timeZoneAbbreviation(now, me.timezone)}`}
                 </Text>
               </View>
               <Button label="Edit profile" icon={Pencil} variant="secondary" size="md" fullWidth={false} onPress={() => router.push('/profile-setup?edit=1')} testID="profile-edit" />

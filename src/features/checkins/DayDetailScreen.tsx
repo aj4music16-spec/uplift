@@ -61,7 +61,14 @@ function DayDetailBody({ day, refreshing, onRefresh }: { day: DayDetail; refresh
   const dispute = disputeGateForDay(day, now);
   const window = decisionWindowLabel(day, now);
 
-  const openDispute = useAction((repo, reason: string) => repo.openDispute({ recordId: day.record!.id, reason }), { onSuccess: () => setDisputeOpen(false) });
+  const recordId = day.record?.id ?? null;
+  const openDispute = useAction(
+    (repo, reason: string) => {
+      if (!recordId) throw new Error('NOT_FOUND');
+      return repo.openDispute({ recordId, reason });
+    },
+    { onSuccess: () => setDisputeOpen(false) },
+  );
   const accept = useAction((repo, recordId: string) => repo.acknowledgeDecision(recordId));
 
   const checkinHref = `/challenge/${day.challengeId}/checkin?date=${day.date}`;
@@ -84,7 +91,7 @@ function DayDetailBody({ day, refreshing, onRefresh }: { day: DayDetail; refresh
         </View>
       </View>
       <SubmissionState day={day} />
-      {day.record?.provenance === 'admin_adjusted' ? <AdjustedBadge /> : null}
+      {day.record?.provenance === 'admin_adjusted' && day.status !== 'success' && day.status !== 'fail' ? <AdjustedBadge /> : null}
 
       {owner && day.record?.decidedAt && day.status !== 'pending' && day.status !== 'late_pending' ? (
         <Card>
@@ -94,8 +101,8 @@ function DayDetailBody({ day, refreshing, onRefresh }: { day: DayDetail; refresh
           </Text>
           {dispute.ok ? (
             <View style={{ gap: space.sm }}>
-              <Button label="Dispute this decision" icon={Flag} variant="secondary" onPress={() => setDisputeOpen(true)} testID="day-dispute" />
-              <Button label="Accept decision" icon={Check} variant="ghost" loading={accept.isPending} onPress={() => accept.mutate(day.record!.id)} testID="day-accept" />
+              <Button label="Dispute this decision" icon={Flag} variant="floating" onPress={() => setDisputeOpen(true)} testID="day-dispute" />
+              <Button label="Accept decision" icon={Check} variant="ghost" loading={accept.isPending} onPress={() => recordId && accept.mutate(recordId)} testID="day-accept" />
               <Text variant="caption" color="textSecondary">
                 Accepting ends your dispute window early so results can be finalized sooner.
               </Text>
@@ -151,7 +158,7 @@ function DayDetailBody({ day, refreshing, onRefresh }: { day: DayDetail; refresh
             <Card key={o.id}>
               <AdjustedBadge />
               <Text variant="bodyStrong">
-                {o.actor.displayName}: {outcomeWord(o.priorOutcome)}
+                By {o.actor.displayName}: {outcomeWord(o.priorOutcome)}
                 {o.priorValue != null ? ` (${valueLabel(day, o.priorValue)})` : ''} → {outcomeWord(o.newOutcome)}
                 {o.newValue != null ? ` (${valueLabel(day, o.newValue)})` : ''}
               </Text>

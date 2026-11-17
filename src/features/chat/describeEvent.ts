@@ -55,7 +55,7 @@ export function describeEvent(event: Record<string, unknown> | null, fallback: s
       if (privateDetail) return { text: `${name} completed the daily goal.`, icon: CircleCheck };
       return { text: date ? `${name} hit the goal for ${date} in ${challenge}.` : `${name} hit the daily goal in ${challenge}.`, icon: CircleCheck };
     case 'admin_corrected':
-      return { text: date ? `${actor} adjusted ${name}’s result for ${date}. Admin adjusted.` : `${actor} adjusted ${name}’s result. Admin adjusted.`, icon: SlidersHorizontal };
+      return { text: date ? `Admin adjusted: ${actor} changed ${name}’s result for ${date}.` : `Admin adjusted: ${actor} changed ${name}’s result.`, icon: SlidersHorizontal };
     case 'rule_change_proposed':
       return { text: `${actor} proposed a rule change for ${challenge}. It needs everyone’s OK.`, icon: FileText };
     case 'rule_change_activated':

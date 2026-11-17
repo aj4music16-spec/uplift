@@ -343,7 +343,7 @@ function StandingRow({
       {standing.removed ? null : standing.qualified ? (
         <StatusBadge label={provisional ? `Reached ${requiredDays}` : 'Finished'} tone="positive" icon={CircleCheck} />
       ) : (
-        <StatusBadge label={`Under ${requiredDays}`} tone="neutral" />
+        <StatusBadge label={provisional ? `Not at ${requiredDays} yet` : 'Didn’t finish'} tone="neutral" />
       )}
     </View>
   );

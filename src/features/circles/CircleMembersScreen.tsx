@@ -142,7 +142,16 @@ function Members({ detail, refreshing, onRefresh }: { detail: CircleDetail; refr
       {manager ? <InvitesSection circleId={circleId} onRevoke={(invite) => setConfirm({ kind: 'revoke', invite })} /> : null}
 
       <View style={{ gap: space.sm }}>
-        <Button label="Leave Circle" icon={LogOut} variant="danger" size="md" onPress={() => setConfirm({ kind: 'leave' })} testID="members-leave" />
+        <Button
+          label="Leave Circle"
+          icon={LogOut}
+          variant="danger"
+          size="md"
+          disabled={role === 'owner'}
+          disabledReason="As the owner, transfer ownership to another member before leaving."
+          onPress={() => setConfirm({ kind: 'leave' })}
+          testID="members-leave"
+        />
         {role === 'owner' ? (
           <Text variant="caption" color="textSecondary" align="center">
             As the owner, transfer ownership to another member before leaving.

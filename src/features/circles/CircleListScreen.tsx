@@ -27,9 +27,9 @@ export function CircleListScreen() {
   return (
     <Screen tabBarInset refreshing={home.isRefetching} onRefresh={() => void home.refetch()} testID="circles-screen">
       <TitleBlock title="Circles" size="display" subtitle="Your private groups. Challenges live inside them." />
-      <View style={{ flexDirection: 'row', gap: space.sm }}>
-        <Button label="Create a Circle" icon={Plus} size="md" style={{ flex: 1 }} onPress={() => setCreating(true)} testID="circles-create" />
-        <Button label="Join with a code" icon={UserPlus} variant="secondary" size="md" style={{ flex: 1 }} onPress={() => setJoining(true)} testID="circles-join" />
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
+        <Button label="Create a Circle" icon={Plus} size="md" style={{ flexGrow: 1, flexBasis: 220 }} onPress={() => setCreating(true)} testID="circles-create" />
+        <Button label="Join with a code" icon={UserPlus} variant="secondary" size="md" style={{ flexGrow: 1, flexBasis: 220 }} onPress={() => setJoining(true)} testID="circles-join" />
       </View>
 
       <QueryBoundary query={home}>

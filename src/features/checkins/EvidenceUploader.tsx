@@ -104,20 +104,27 @@ export function EvidenceUploader({ habitType, date, value, onChange, sampleMinut
       )}
 
       {mode === 'demo' && screenTime && !value ? (
-        <Button
-          label="Use a synthetic sample (Demo Mode)"
-          icon={FlaskConical}
-          variant="ghost"
-          size="md"
-          disabled={disabled || sampleMinutes == null}
-          disabledReason="Enter the total first so the sample can show it"
-          onPress={() => {
-            if (sampleMinutes == null) return;
-            setProblem(null);
-            onChange(syntheticEvidence({ date, minutes: sampleMinutes }));
-          }}
-          testID="checkin-use-sample"
-        />
+        <View style={{ gap: space.xs }}>
+          <Button
+            label="Use a synthetic sample (Demo Mode)"
+            icon={FlaskConical}
+            variant="ghost"
+            size="md"
+            disabled={disabled || sampleMinutes == null}
+            disabledReason="Enter the total first so the sample can show it"
+            onPress={() => {
+              if (sampleMinutes == null) return;
+              setProblem(null);
+              onChange(syntheticEvidence({ date, minutes: sampleMinutes }));
+            }}
+            testID="checkin-use-sample"
+          />
+          {sampleMinutes == null ? (
+            <Text variant="caption" color="textSecondary" align="center">
+              Enter the total first so the sample can show it.
+            </Text>
+          ) : null}
+        </View>
       ) : null}
     </View>
   );

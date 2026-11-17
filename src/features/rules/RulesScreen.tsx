@@ -65,12 +65,21 @@ function RulesContent({ challenge }: { challenge: ChallengeDetail }) {
   const [declining, setDeclining] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
 
-  const respond = useAction((repo, accept: boolean) => repo.respondToRuleChange({ versionId: proposal!.version.id, accept }), {
+  // Read outside the callback: the compiler tracks the callback's dependencies during render, and the
+  // proposal becomes null once the last player answers, so `proposal!.version.id` would throw there.
+  const proposalVersionId = proposal?.version.id ?? null;
+  const respond = useAction(
+    (repo, accept: boolean) => {
+      if (!proposalVersionId) throw new Error('NOT_FOUND');
+      return repo.respondToRuleChange({ versionId: proposalVersionId, accept });
+    },
+    {
     onSuccess: (_result, accept) => {
       setDeclining(false);
       toast.success(accept ? 'You accepted the new rules' : 'You declined the change', accept ? undefined : 'The original rules stay.');
     },
-  });
+    },
+  );
   const withdraw = useAction((repo, versionId: string) => repo.withdrawRuleChange(versionId), {
     onSuccess: () => {
       setWithdrawing(false);

@@ -52,9 +52,10 @@ export function ActivityScreen() {
         size="display"
         subtitle="Invites, reviews, rule changes and results. Shown here in the app; push notifications aren’t available yet."
       />
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
-        <View style={{ flex: 1 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: space.md }}>
+        <View style={{ flexGrow: 1, flexBasis: 190 }}>
           <PillTabs<Filter>
+            style={{ marginRight: 0 }}
             options={[
               { value: 'all', label: 'All' },
               { value: 'unread', label: 'Unread', count: unread },

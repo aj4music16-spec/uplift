@@ -1,5 +1,5 @@
 import { Redirect, useRouter } from 'expo-router';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 import { Avatar, type AvatarSpec } from '@/components/Avatar';
 import { Banner } from '@/components/Badges';
@@ -37,6 +37,8 @@ export function WelcomeScreen() {
   const router = useRouter();
   const { mode, phase, demo, notice, clearNotice, pendingInvite } = useApp();
   const afterSignIn = useAfterSignInHref();
+  // Six overlapping faces need about 290pt at full size; shrink them on narrow phones.
+  const faceSize = useWindowDimensions().width < 360 ? 44 : 52;
 
   if (phase === 'loading') return <SplashView />;
   if (phase === 'signed_in') return <Redirect href={afterSignIn} />;
@@ -104,7 +106,7 @@ export function WelcomeScreen() {
 
       <View style={{ flexDirection: 'row', alignItems: 'center' }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
         {SAMPLE_AVATARS.map((avatar, index) => (
-          <Avatar key={`${avatar.color}-${avatar.face}`} avatar={avatar} size={52} ring name="" style={{ marginLeft: index === 0 ? 0 : -12, zIndex: SAMPLE_AVATARS.length - index }} />
+          <Avatar key={`${avatar.color}-${avatar.face}`} avatar={avatar} size={faceSize} ring name="" style={{ marginLeft: index === 0 ? 0 : -12, zIndex: SAMPLE_AVATARS.length - index }} />
         ))}
       </View>
 

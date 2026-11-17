@@ -141,12 +141,12 @@ function QueueBody({ detail, queue, refreshing, onRefresh }: { detail: Challenge
                 <Text variant="caption" color="textSecondary">
                   If approved as entered: {met ? 'day completed' : `verified, but ${rule.comparator === 'lte' ? 'over the limit' : 'under the goal'} → day not met`} (goal {rule.comparator === 'lte' ? 'at most' : rule.comparator === 'gte' ? 'at least' : ''} {fmt(rule, rule.target)}).
                 </Text>
-                <Button label="Approve" icon={Check} variant="secondary" loading={busy && review.variables?.decision === 'approve'} onPress={() => approve(item)} testID="review-approve" />
-                <View style={{ flexDirection: 'row', gap: space.sm }}>
+                <Button label="Approve" icon={Check} variant="floating" loading={busy && review.variables?.decision === 'approve'} onPress={() => approve(item)} testID="review-approve" />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
                   {rule.comparator !== 'bool' ? (
-                    <Button label="Correct value" icon={Pencil} variant="ghost" size="md" fullWidth={false} style={{ flex: 1 }} onPress={() => setSheet({ kind: 'correct', item })} testID="review-correct" />
+                    <Button label="Correct value" icon={Pencil} variant="floating" size="md" fullWidth={false} style={{ flexGrow: 1, flexBasis: 170 }} onPress={() => setSheet({ kind: 'correct', item })} testID="review-correct" />
                   ) : null}
-                  <Button label="Reject" icon={CircleX} variant="danger" size="md" fullWidth={false} style={{ flex: 1 }} onPress={() => setSheet({ kind: 'reject', item })} testID="review-reject" />
+                  <Button label="Reject" icon={CircleX} variant="danger" size="md" fullWidth={false} style={{ flexGrow: 1, flexBasis: 170 }} onPress={() => setSheet({ kind: 'reject', item })} testID="review-reject" />
                 </View>
                 {item.evidenceId ? (
                   <Button label="Can’t read it? Reject as unreadable" variant="ghost" size="sm" onPress={() => setSheet({ kind: 'reject', item, preset: 'Unreadable' })} testID="review-reject-unreadable" />
@@ -157,9 +157,9 @@ function QueueBody({ detail, queue, refreshing, onRefresh }: { detail: Challenge
                 <Text variant="caption" color="textSecondary">
                   Sent after the deadline. Accepting lets it be reviewed like any other proof; declining leaves the day as missed.
                 </Text>
-                <View style={{ flexDirection: 'row', gap: space.sm }}>
-                  <Button label="Accept late" icon={Check} variant="secondary" size="md" fullWidth={false} style={{ flex: 1 }} onPress={() => setSheet({ kind: 'late', item, accept: true })} testID="review-late-accept" />
-                  <Button label="Decline" icon={CircleX} variant="danger" size="md" fullWidth={false} style={{ flex: 1 }} onPress={() => setSheet({ kind: 'late', item, accept: false })} testID="review-late-decline" />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
+                  <Button label="Accept late" icon={Check} variant="floating" size="md" fullWidth={false} style={{ flexGrow: 1, flexBasis: 140 }} onPress={() => setSheet({ kind: 'late', item, accept: true })} testID="review-late-accept" />
+                  <Button label="Decline" icon={CircleX} variant="danger" size="md" fullWidth={false} style={{ flexGrow: 1, flexBasis: 140 }} onPress={() => setSheet({ kind: 'late', item, accept: false })} testID="review-late-decline" />
                 </View>
               </>
             )}
@@ -184,7 +184,7 @@ function QueueBody({ detail, queue, refreshing, onRefresh }: { detail: Challenge
                 <StatusBadge label="Open" tone="warning" icon={Flag} />
               </View>
               <Text variant="callout">“{d.reason}”</Text>
-              <Button label="Resolve" variant="secondary" onPress={() => setResolving(d)} testID="dispute-resolve" />
+              <Button label="Resolve" variant="floating" onPress={() => setResolving(d)} testID="dispute-resolve" />
               <Button label="Open day" icon={FileText} variant="ghost" size="sm" onPress={() => router.push(`/challenge/${detail.id}/day?date=${d.date}&participantId=${d.participantId}`)} />
             </Card>
           ))}

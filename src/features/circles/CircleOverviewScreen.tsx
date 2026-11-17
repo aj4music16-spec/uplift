@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 import { AvatarStack } from '@/components/Avatar';
 import { Button, IconButton } from '@/components/Button';
@@ -98,6 +98,9 @@ export function CircleOverviewScreen() {
   const circle = useCircle(circleId);
   const now = useNow();
   const [tab, setTab] = useState<Tab>(isTab(params.tab) ? params.tab : 'challenges');
+  // Equal-width tabs when they fit; on narrow phones the row scrolls instead of squeezing labels.
+  const { width: windowWidth } = useWindowDimensions();
+  const stretchTabs = windowWidth >= 360;
   // Follow ?tab= when it changes (adjusting state during render, not in an effect).
   const [seenTabParam, setSeenTabParam] = useState(params.tab);
   if (params.tab !== seenTabParam) {
@@ -126,7 +129,7 @@ export function CircleOverviewScreen() {
         subtitle={pluralize(detail.circle.memberCount, 'member')}
         right={<AvatarStack people={detail.members.length > 0 ? detail.members : detail.circle.members} size={32} max={4} />}
       />
-      <PillTabs options={TABS} value={tab} onChange={(next) => setTab(next)} stretch accessibilityLabel="Circle sections" testID="circle-tab" />
+      <PillTabs options={TABS} value={tab} onChange={(next) => setTab(next)} stretch={stretchTabs} accessibilityLabel="Circle sections" testID="circle-tab" />
     </View>
   );
 

@@ -57,7 +57,7 @@ export function RulesSummary({ rules, extra }: { rules: RulesLike; extra?: { lab
   const total = durationDays(rules.startDate, rules.endDate);
   const rows = [
     { label: 'Daily goal', value: describeGoal(rules.habitType, rules.comparator, rules.target, rules.metricUnit), note: rules.habitType === 'screen_time' ? SCREEN_TIME_SCOPE : undefined },
-    { label: 'Dates', value: `${formatDateRange(rules.startDate, rules.endDate)} · ${total} ${total === 1 ? 'day' : 'days'}`, note: `Time zone: ${timeZoneCity(rules.timezone)} (${rules.timezone}). It never changes.` },
+    { label: 'Dates', value: `${formatDateRange(rules.startDate, rules.endDate)} · ${total} ${total === 1 ? 'day' : 'days'}`, note: `Time zone: ${timeZoneCity(rules.timezone) === rules.timezone ? rules.timezone : `${timeZoneCity(rules.timezone)} (${rules.timezone})`}. It never changes.` },
     { label: 'To finish', value: `Finish ${rules.requiredDays} of ${total} days` },
     { label: 'Proof', value: verificationLabel(rules.habitType, rules.verification), note: reviewSentence(rules.habitType, rules.verification) },
     { label: 'Deadline', value: 'Noon the next day', note: deadlineSentence(rules.habitType, rules.timezone) },

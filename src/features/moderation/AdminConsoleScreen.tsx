@@ -6,7 +6,6 @@ import { Avatar } from '@/components/Avatar';
 import { Banner, StatusBadge } from '@/components/Badges';
 import { Button } from '@/components/Button';
 import { Card, Divider, ListRow } from '@/components/Card';
-import { DayProgress } from '@/components/DayProgress';
 import { ChoiceRow, TextField } from '@/components/Fields';
 import { Ban, History, ListChecks, SlidersHorizontal, Trophy, UserMinus, UserPlus } from '@/components/icons';
 import { NavHeader, Screen, SectionHeading, TitleBlock } from '@/components/Screen';
@@ -16,6 +15,7 @@ import { Text } from '@/components/Text';
 import { useAction, useChallenge, useCircle, useDay } from '@/data/hooks';
 import type { BlockerView, ChallengeDetail, ParticipantView, Person } from '@/data/types';
 import { formatDateKey, LIMITS, pluralize } from '@/domain';
+import { DayWeeks } from '@/features/challenges/DayWeeks';
 import { DataError } from '@/features/checkins/common';
 import { formatInstant } from '@/features/checkins/logic';
 import { describeSubmission } from '@/features/checkins/SubmissionState';
@@ -187,7 +187,7 @@ function EditDetails({ detail, disabled }: { detail: ChallengeDetail; disabled: 
         <TextField label="Description" value={description} onChangeText={setDescription} multiline maxLength={LIMITS.maxDescriptionLength} editable={!disabled} helper="Changes to the name and description apply right away." testID="admin-description" />
         <Button
           label="Save details"
-          variant="secondary"
+          variant="floating"
           disabled={disabled || !changed || !nameOk}
           disabledReason={disabled ? 'Closed challenges can’t change' : 'Change something first'}
           loading={save.isPending}
@@ -239,7 +239,7 @@ function Participants({ detail, disabled }: { detail: ChallengeDetail; disabled:
                   )}
                 </View>
                 {row && row.days.length > 0 ? (
-                  <DayProgress days={row.days} size={26} onSelect={(date) => router.push(`/challenge/${detail.id}/day?date=${date}&participantId=${p.id}`)} />
+                  <DayWeeks days={row.days} maxSize={26} inset={space.xl * 2} onSelect={(date) => router.push(`/challenge/${detail.id}/day?date=${date}&participantId=${p.id}`)} />
                 ) : null}
               </View>
             );
@@ -247,7 +247,7 @@ function Participants({ detail, disabled }: { detail: ChallengeDetail; disabled:
           <Text variant="caption" color="textSecondary">
             Tap a day to open it.
           </Text>
-          <Button label="Adjust a day" icon={SlidersHorizontal} variant="secondary" disabled={disabled} disabledReason="Closed challenges can’t change" onPress={() => setAdjustOpen(true)} testID="admin-adjust-day" />
+          <Button label="Adjust a day" icon={SlidersHorizontal} variant="floating" disabled={disabled} disabledReason="Closed challenges can’t change" onPress={() => setAdjustOpen(true)} testID="admin-adjust-day" />
         </Card>
       )}
       <ConfirmationSheet
@@ -309,7 +309,7 @@ function AdjustDayFlow({ detail, onClose }: { detail: ChallengeDetail; onClose: 
         days.length > 0 ? (
           <View style={{ gap: space.sm }}>
             <Text variant="calloutStrong">Day{date ? `: ${formatDateKey(date)}` : ''}</Text>
-            <DayProgress days={days} onSelect={(d) => { setDate(d); setConfirmed(false); }} selectedDate={date} />
+            <DayWeeks days={days} onSelect={(d) => { setDate(d); setConfirmed(false); }} selectedDate={date} />
           </View>
         ) : (
           <Text variant="callout" color="textSecondary">No days have started yet.</Text>
@@ -361,7 +361,7 @@ function Admins({ detail, disabled }: { detail: ChallengeDetail; disabled: boole
             Every challenge needs at least one admin. Appoint another admin before removing this one.
           </Text>
         ) : null}
-        <Button label="Appoint an admin" icon={UserPlus} variant="secondary" disabled={disabled} disabledReason="Closed challenges can’t change" onPress={() => setAppointOpen(true)} testID="admin-appoint" />
+        <Button label="Appoint an admin" icon={UserPlus} variant="floating" disabled={disabled} disabledReason="Closed challenges can’t change" onPress={() => setAppointOpen(true)} testID="admin-appoint" />
       </Card>
       <Sheet visible={appointOpen} onClose={() => setAppointOpen(false)} title="Appoint an admin" subtitle="Admins review proof, fix results and see private proof. The change is logged.">
         {circle.isPending ? (

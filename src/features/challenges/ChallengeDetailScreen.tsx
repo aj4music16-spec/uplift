@@ -1,12 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 import { Avatar, AvatarStack } from '@/components/Avatar';
 import { Banner, ChallengeStatusBadge, HabitBadge } from '@/components/Badges';
 import { Button, IconButton } from '@/components/Button';
 import { Card, Divider, ListRow } from '@/components/Card';
-import { DayProgress, DayTally } from '@/components/DayProgress';
+import { DayTally } from '@/components/DayProgress';
 import { ChoiceRow } from '@/components/Fields';
 import { CircleAlert, Clock, Ellipsis, FlaskConical, History, House, Scale, Trophy } from '@/components/icons';
 import { PillTabs } from '@/components/Pills';
@@ -26,6 +26,7 @@ import { StandingsList } from '@/features/standings/StandingsList';
 import { colors, space } from '@/theme/tokens';
 
 import { deriveActions } from './actions';
+import { DayWeeks } from './DayWeeks';
 import { RulesSummary } from './RulesSummary';
 
 type Tab = 'progress' | 'rules' | 'standings';
@@ -142,13 +143,14 @@ function ProgressTab({ detail, today }: { detail: ChallengeDetail; today: string
             <View style={{ flex: 1, gap: 2 }}>
               <Text variant="headline">Your progress</Text>
               <Text variant="caption" color="textSecondary">
-                Finish {detail.rules.requiredDays} of {detail.myDays.length} to qualify{v.rank ? ` · ${v.tied ? 'tied ' : ''}${ordinal(v.rank)}` : ''}
+                Finish {detail.rules.requiredDays} of {detail.myDays.length} to qualify{v.rank && detail.status !== 'scheduled' ? ` · ${v.tied ? 'tied ' : ''}${ordinal(v.rank)}` : ''}
               </Text>
             </View>
             <DayTally done={v.successfulDays} total={detail.myDays.length} pending={v.pendingDays} />
           </View>
-          <DayProgress
+          <DayWeeks
             days={detail.myDays}
+            inset={space.xl * 2}
             onSelect={(date) => {
               if (compareDateKeys(date, today) <= 0) router.push(`/challenge/${detail.id}/day?date=${date}`);
             }}
@@ -233,6 +235,9 @@ export function ChallengeDetailScreen() {
   const query = useChallenge(challengeId);
   const now = useNow();
   const [tab, setTab] = useState<Tab>('progress');
+  // Equal-width tabs when they fit; on narrow phones the row scrolls instead of squeezing labels.
+  const { width: windowWidth } = useWindowDimensions();
+  const stretchTabs = windowWidth >= 360;
   const [joining, setJoining] = useState(false);
   const detail = query.data;
 
@@ -288,7 +293,7 @@ export function ChallengeDetailScreen() {
     third = left === 1 ? { value: 'Last', unit: 'day' } : { value: String(left), unit: 'days left' };
   } else if (detail.status === 'review') third = { value: 'Review', unit: 'final checks' };
   else if (detail.status === 'draft') third = { value: 'Draft', unit: 'not published' };
-  else third = { value: 'Done', unit: detail.status === 'canceled' ? 'canceled' : 'finished' };
+  else third = detail.status === 'canceled' ? { value: 'Off', unit: 'canceled' } : { value: 'Ended', unit: formatDateKey(detail.endDate) };
 
   let footer: React.ReactNode = null;
   if (detail.status === 'draft' && v.isAdmin) {
@@ -331,8 +336,8 @@ export function ChallengeDetailScreen() {
       {detail.status === 'canceled' ? (
         <Banner tone="neutral" icon={CircleAlert} title="Canceled" message={`${detail.canceledReason ? `Reason: ${detail.canceledReason}` : 'An admin canceled this challenge.'}${detail.canceledAt ? ` · ${formatDateTime(detail.canceledAt, detail.timezone)}` : ''} History is kept.`} />
       ) : null}
-      {closed && footer && action ? (
-        <ListRow title="See results" icon={Trophy} onPress={() => router.push(`/challenge/${detail.id}/results`)} testID="challenge-results-row" />
+      {(closed && footer && action) || detail.status === 'review' ? (
+        <ListRow title={detail.status === 'review' ? 'Results so far' : 'See results'} subtitle={detail.status === 'review' ? 'Not final until an admin finalizes them' : undefined} icon={Trophy} onPress={() => router.push(`/challenge/${detail.id}/results`)} testID="challenge-results-row" />
       ) : null}
       {detail.reward ? (
         <ListRow
@@ -344,7 +349,7 @@ export function ChallengeDetailScreen() {
         />
       ) : null}
 
-      <PillTabs options={TABS} value={tab} onChange={setTab} stretch accessibilityLabel="Challenge sections" testID="challenge-tab" />
+      <PillTabs options={TABS} value={tab} onChange={setTab} stretch={stretchTabs} accessibilityLabel="Challenge sections" testID="challenge-tab" />
       {tab === 'progress' ? <ProgressTab detail={detail} today={today} /> : null}
       {tab === 'rules' ? <RulesTab detail={detail} /> : null}
       {tab === 'standings' ? (

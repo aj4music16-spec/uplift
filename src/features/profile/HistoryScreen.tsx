@@ -20,7 +20,7 @@ function summary(c: ChallengeCard): string {
   const days = `${c.viewer.successfulDays} of ${total} days`;
   if (c.viewer.removed || c.viewer.rank == null) return `${days} · removed`;
   const rank = c.viewer.tied ? `Tied for ${ordinal(c.viewer.rank)}` : ordinal(c.viewer.rank);
-  return `${days} · ${rank}${c.viewer.qualified ? ' · finished' : ''}`;
+  return `${days} · ${rank}${c.viewer.qualified ? ' · reached the goal' : ''}`;
 }
 
 export function HistoryScreen() {

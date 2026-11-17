@@ -6,7 +6,6 @@ import { Animated, View } from 'react-native';
 import { Banner, StatusBadge } from '@/components/Badges';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { DayProgress } from '@/components/DayProgress';
 import { ChoiceRow } from '@/components/Fields';
 import { CircleAlert, CircleCheck, Clock, FileText, Pause, Pencil, Play, Plus, Square, Timer, User } from '@/components/icons';
 import { NavHeader, Screen, SectionHeading, TitleBlock } from '@/components/Screen';
@@ -27,6 +26,7 @@ import {
   toAppError,
   validateSubmissionValue,
 } from '@/domain';
+import { DayWeeks } from '@/features/challenges/DayWeeks';
 import { useReducedMotion } from '@/lib/motion';
 import { colors, radius, space } from '@/theme/tokens';
 
@@ -73,7 +73,7 @@ export function CheckinScreen() {
   const picker = (
     <View style={{ gap: space.sm }}>
       <Text variant="calloutStrong">Day</Text>
-      <DayProgress days={detail.myDays} onSelect={setPicked} selectedDate={date} />
+      <DayWeeks days={detail.myDays} onSelect={setPicked} selectedDate={date} />
     </View>
   );
 
@@ -290,13 +290,15 @@ function ReadingInput({ day, value, onChange, current }: { day: DayDetail; value
   const { repository } = useApp();
   const [runningSince, setRunningSince] = useState<number | null>(null);
   const [banked, setBanked] = useState(0);
-  const [, setTick] = useState(0);
+  // The current time lives in state so each tick re-renders with a new value
+  // (a bare counter is not read during render, so the compiler would keep the old elapsed time).
+  const [nowMs, setNowMs] = useState(() => repository.now().getTime());
   useEffect(() => {
     if (runningSince == null) return undefined;
-    const timer = setInterval(() => setTick((t) => t + 1), 1000);
+    const timer = setInterval(() => setNowMs(repository.now().getTime()), 1000);
     return () => clearInterval(timer);
-  }, [runningSince]);
-  const elapsed = banked + (runningSince != null ? repository.now().getTime() - runningSince : 0);
+  }, [runningSince, repository]);
+  const elapsed = banked + (runningSince != null ? Math.max(0, nowMs - runningSince) : 0);
   const seconds = Math.floor(elapsed / 1000);
   const add = (minutes: number) => onChange(Math.min(1440, (value ?? current ?? 0) + minutes));
 
@@ -327,9 +329,14 @@ function ReadingInput({ day, value, onChange, current }: { day: DayDetail; value
             {String(Math.floor(seconds / 60)).padStart(2, '0')}:{String(seconds % 60).padStart(2, '0')}
           </Text>
         </View>
-        <View style={{ flexDirection: 'row', gap: space.sm }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
           {runningSince == null ? (
-            <Button label={banked > 0 ? 'Resume' : 'Start'} icon={Play} variant="secondary" size="md" fullWidth={false} style={{ flex: 1 }} onPress={() => setRunningSince(repository.now().getTime())} testID="timer-start" />
+            <Button label={banked > 0 ? 'Resume' : 'Start'} icon={Play} variant="secondary" size="md" fullWidth={false} style={{ flexGrow: 1, flexBasis: 160 }} onPress={() => {
+                const start = repository.now().getTime();
+                setNowMs(start);
+                setRunningSince(start);
+              }}
+              testID="timer-start" />
           ) : (
             <Button
               label="Pause"
@@ -337,7 +344,7 @@ function ReadingInput({ day, value, onChange, current }: { day: DayDetail; value
               variant="secondary"
               size="md"
               fullWidth={false}
-              style={{ flex: 1 }}
+              style={{ flexGrow: 1, flexBasis: 160 }}
               onPress={() => {
                 setBanked(elapsed);
                 setRunningSince(null);
@@ -351,7 +358,7 @@ function ReadingInput({ day, value, onChange, current }: { day: DayDetail; value
             variant="ghost"
             size="md"
             fullWidth={false}
-            style={{ flex: 1 }}
+            style={{ flexGrow: 1, flexBasis: 160 }}
             disabled={elapsed < 60_000}
             disabledReason="Read for at least a minute first"
             onPress={() => {

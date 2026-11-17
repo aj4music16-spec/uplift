@@ -255,6 +255,7 @@ function InviteSummary({ preview, code }: { preview: InvitePreview; code: string
 
 function InviteProblem({ header, code, onDone, onRetry }: { header: React.ReactNode; code: ErrorCode; onDone: () => void; onRetry?: () => void }) {
   const copy = describeError(new Error(code));
+  const { mode } = useApp();
   return (
     <Screen
       header={header}
@@ -265,6 +266,12 @@ function InviteProblem({ header, code, onDone, onRetry }: { header: React.ReactN
         </>
       }>
       <EmptyState emoji={INVITE_STATES[code]?.emoji} title={copy.title} message={copy.message} />
+      {mode === 'demo' && code === 'INVITE_INVALID' ? (
+        <Banner
+          icon={FlaskConical}
+          message="Demo invites exist only while the demo is open. Reloading the page starts a fresh demo, so codes created before no longer work."
+        />
+      ) : null}
     </Screen>
   );
 }
