@@ -97,6 +97,7 @@ npm start               # Real backend (needs .env, see README)
 npm run db:start        # local Supabase stack (Docker)
 npm run db:reset        # apply migrations + seed
 npm run db:env          # write local URL + publishable key into .env
+npm run seed:dev       # optional: replay the sample Circle into the local backend as six accounts
 
 npm run lint
 npm run typecheck
